@@ -54,7 +54,7 @@ OCI_KUBERNETES_PROXYMUX_SERVICE_PORT = "12250"
 KUBERNETES_SERVICE_HOST = "KUBERNETES_SERVICE_HOST"
 
 
-def get_resource_principals_signer(resource_principal_token_path_provider=None):
+def get_resource_principals_signer(resource_principal_token_path_provider=None, **kwargs):
     """
     A Resource Principals signer is token based signer.  The flavor of resource
     principals signer required is determined by the configured environment of
@@ -98,7 +98,10 @@ def get_resource_principals_signer(resource_principal_token_path_provider=None):
             resource_session_token_for_leaf_resource = os.environ.get(OCI_RESOURCE_PRINCIPAL_RPST_FOR_LEAF_RESOURCE)
             private_key_for_leaf_resource = os.environ.get(OCI_RESOURCE_PRINCIPAL_PRIVATE_PEM_FOR_LEAF_RESOURCE)
             private_key_passphrase_for_leaf_resource = os.environ.get(OCI_RESOURCE_PRINCIPAL_PRIVATE_PEM_PASSPHRASE_FOR_LEAF_RESOURCE)
-            region_for_leaf_resource = os.environ.get(OCI_RESOURCE_PRINCIPAL_REGION_FOR_LEAF_RESOURCE)
+            if 'region' in kwargs:
+                region_for_leaf_resource = kwargs.pop('region')
+            else:
+                region_for_leaf_resource = os.environ.get(OCI_RESOURCE_PRINCIPAL_REGION_FOR_LEAF_RESOURCE)
 
             leaf_resource_rp_signer = EphemeralResourcePrincipalSigner(session_token=resource_session_token_for_leaf_resource,
                                                                        private_key=private_key_for_leaf_resource,
@@ -111,7 +114,10 @@ def get_resource_principals_signer(resource_principal_token_path_provider=None):
             tenancy_id_for_leaf_resource = os.environ.get(OCI_RESOURCE_PRINCIPAL_TENANCY_ID_FOR_LEAF_RESOURCE)
             private_key_for_leaf_resource = os.environ.get(OCI_RESOURCE_PRINCIPAL_PRIVATE_PEM_FOR_LEAF_RESOURCE)
             private_key_passphrase_for_leaf_resource = os.environ.get(OCI_RESOURCE_PRINCIPAL_PRIVATE_PEM_PASSPHRASE_FOR_LEAF_RESOURCE)
-            region_for_leaf_resource = os.environ.get(OCI_RESOURCE_PRINCIPAL_REGION_FOR_LEAF_RESOURCE)
+            if 'region' in kwargs:
+                region_for_leaf_resource = kwargs.pop('region')
+            else:
+                region_for_leaf_resource = os.environ.get(OCI_RESOURCE_PRINCIPAL_REGION_FOR_LEAF_RESOURCE)
             security_context = os.environ.get(OCI_RESOURCE_PRINCIPAL_SECURITY_CONTEXT_FOR_LEAF_RESOURCE)
             resource_principal_token_path = os.environ.get(OCI_RESOURCE_PRINCIPAL_RPT_PATH_FOR_LEAF_RESOURCE)
 
@@ -181,7 +187,10 @@ def get_resource_principals_signer(resource_principal_token_path_provider=None):
         session_token = os.environ.get(OCI_RESOURCE_PRINCIPAL_RPST)
         private_key = os.environ.get(OCI_RESOURCE_PRINCIPAL_PRIVATE_PEM)
         private_key_passphrase = os.environ.get(OCI_RESOURCE_PRINCIPAL_PRIVATE_PEM_PASSPHRASE)
-        region = os.environ.get(OCI_RESOURCE_PRINCIPAL_REGION)
+        if 'region' in kwargs:
+            region = kwargs.pop('region')
+        else:
+            region = os.environ.get(OCI_RESOURCE_PRINCIPAL_REGION)
 
         return EphemeralResourcePrincipalSigner(session_token=session_token,
                                                 private_key=private_key,
@@ -205,9 +214,12 @@ def get_resource_principals_signer(resource_principal_token_path_provider=None):
         tenancy_id = os.environ.get(OCI_RESOURCE_PRINCIPAL_TENANCY_ID)
         private_key = os.environ.get(OCI_RESOURCE_PRINCIPAL_PRIVATE_PEM)
         private_key_passphrase = os.environ.get(OCI_RESOURCE_PRINCIPAL_PRIVATE_PEM_PASSPHRASE)
-        region = os.environ.get(OCI_RESOURCE_PRINCIPAL_REGION)
         security_context = os.environ.get(OCI_RESOURCE_PRINCIPAL_SECURITY_CONTEXT)
         resource_principal_token_path = os.environ.get(OCI_RESOURCE_PRINCIPAL_RPT_PATH)
+        if 'region' in kwargs:
+            region = kwargs.pop('region')
+        else:
+            region = os.environ.get(OCI_RESOURCE_PRINCIPAL_REGION)
 
         return EphemeralResourcePrincipalV21Signer(resource_principal_token_endpoint=resource_principal_token_endpoint,
                                                    resource_principal_session_token_endpoint=resource_principal_session_token_endpoint,
@@ -308,7 +320,11 @@ def get_oke_workload_identity_resource_principal_signer(service_account_token_pa
     else:
         sa_token_provider = SuppliedServiceAccountTokenProvider(token_string=service_account_token)
     service_host = os.environ.get(KUBERNETES_SERVICE_HOST)
-    region = os.environ.get(OCI_RESOURCE_PRINCIPAL_REGION)
+    
+    if 'region' in kwargs:
+        region = kwargs.pop('region')
+    else:
+        region = os.environ.get(OCI_RESOURCE_PRINCIPAL_REGION)
 
     return OkeWorkloadIdentityResourcePrincipalSigner(sa_token_provider=sa_token_provider,
                                                       sa_cert_path=sa_cert_path,
